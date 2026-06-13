@@ -44,6 +44,9 @@ export const metadata: Metadata = {
   authors: [{ name: 'DevToolbox Team' }],
   creator: 'DevToolbox',
   publisher: 'DevToolbox',
+  verification: {
+    google: 'Le378wzedv9A8VPZVXVJVkcXwksof6LtQjHJ0bDxIUc',
+  },
   openGraph: {
     type: 'website',
     locale: 'en_US',
