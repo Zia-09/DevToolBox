@@ -1,14 +1,10 @@
-import { MetadataRoute } from 'next';
-
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://devtoolbox.io';
-
-export default function robots(): MetadataRoute.Robots {
+export default function robots() {
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://devtoolbox.io';
   return {
-    rules: {
-      userAgent: '*',
-      allow: '/',
-      disallow: ['/api/', '/admin/'],
-    },
-    sitemap: `${baseUrl}/sitemap.xml`,
+    rules: [{ 
+      userAgent: '*', 
+      allow: '/' 
+    }],
+    sitemap: `${base}/sitemap.xml`,
   };
 }

@@ -27,6 +27,12 @@ const websiteSchema = {
   },
 };
 
+export const viewport = {
+  themeColor: '#0F1117',
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
@@ -38,8 +44,6 @@ export const metadata: Metadata = {
   authors: [{ name: 'DevToolbox Team' }],
   creator: 'DevToolbox',
   publisher: 'DevToolbox',
-  themeColor: '#0F1117',
-  viewport: 'width=device-width, initial-scale=1',
   openGraph: {
     type: 'website',
     locale: 'en_US',
@@ -99,6 +103,25 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ 
+          __html: `(function(){
+            try{
+              var t=localStorage.getItem('devtoolbox_theme');
+              if(t==='dark'||!t){
+                document.documentElement
+                  .classList.add('dark');
+              }
+            }catch(e){}
+          })();`
+        }} />
+        <link 
+          rel="manifest" 
+          href="/manifest.json" 
+        />
+        <meta 
+          name="theme-color" 
+          content="#3B82F6" 
+        />
         {/* JSON-LD Structured Data */}
         <script
           type="application/ld+json"
@@ -145,7 +168,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} min-h-screen bg-background text-foreground`}>
         <Navbar />
-        <main className="pt-16">
+        <main className="pt-16 min-h-screen">
           {children}
         </main>
         <Footer />

@@ -16,7 +16,7 @@ export default function BlogPage() {
     : getBlogPostsByCategory(selectedCategory);
 
   return (
-    <main className="min-h-screen pt-24 pb-16">
+    <main className="min-h-screen pt-8 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <nav className="mb-6 text-sm text-muted-foreground">
@@ -53,18 +53,17 @@ export default function BlogPage() {
 
         {/* Blog Posts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPosts.map((post, index) => (
-            <article
+          {filteredPosts.map((post) => (
+            <Link
               key={post.id}
-              className="group flex flex-col p-6 rounded-xl bg-card border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300"
+              href={`/blog/${post.slug}`}
+              className="group flex flex-col h-full p-6 rounded-xl bg-card border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300"
             >
               <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary w-fit">
                 {post.category}
               </span>
               <h2 className="font-semibold text-xl mt-4 mb-3 group-hover:text-primary transition-colors">
-                <Link href={`/blog/${post.slug}`}>
-                  {post.title}
-                </Link>
+                {post.title}
               </h2>
               <p className="text-muted-foreground text-sm line-clamp-3 mb-4 flex-grow">
                 {post.excerpt}
@@ -73,13 +72,10 @@ export default function BlogPage() {
                 <span>{formatDate(post.date)}</span>
                 <span>{post.readTime}</span>
               </div>
-              <Link
-                href={`/blog/${post.slug}`}
-                className="text-primary text-sm font-medium hover:underline"
-              >
+              <span className="text-primary text-sm font-medium group-hover:underline">
                 Read More
-              </Link>
-            </article>
+              </span>
+            </Link>
           ))}
         </div>
 

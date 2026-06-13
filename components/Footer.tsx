@@ -13,8 +13,8 @@ const footerLinks = {
     { href: '/about', label: 'About' },
   ],
   Legal: [
-    { href: '#', label: 'Privacy Policy' },
-    { href: '#', label: 'Terms of Service' },
+    { href: '/privacy-policy', label: 'Privacy Policy' },
+    { href: '/terms-of-service', label: 'Terms of Service' },
   ],
 };
 
@@ -54,7 +54,7 @@ export function Footer() {
 
         <div className="mt-12 pt-8 border-t border-border">
           <p className="text-sm text-muted-foreground text-center">
-            © 2025 DevToolbox. All rights reserved.
+            © 2026 DevToolbox. All rights reserved.
           </p>
         </div>
       </div>

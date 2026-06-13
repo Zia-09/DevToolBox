@@ -17,6 +17,7 @@ interface ToolCardProps {
   tags: string[];
   isNew?: boolean;
   isPopular?: boolean;
+  hasPage?: boolean;
   variant?: 'default' | 'compact';
 }
 
@@ -33,11 +34,29 @@ export function ToolCard({
   tags,
   isNew,
   isPopular,
+  hasPage = false,
   variant = 'default',
 }: ToolCardProps) {
   const IconComponent = getIconComponent(icon);
 
   if (variant === 'compact') {
+    if (!hasPage) {
+      return (
+        <div className="group flex items-center gap-3 p-3 rounded-lg bg-card border border-border opacity-60 cursor-not-allowed">
+          <div className="p-2 rounded-lg bg-muted text-muted-foreground">
+            <IconComponent className="h-4 w-4" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <h3 className="font-medium text-foreground truncate">{name}</h3>
+              <Badge variant="secondary" className="text-xs bg-muted text-muted-foreground">
+                Soon
+              </Badge>
+            </div>
+          </div>
+        </div>
+      );
+    }
     return (
       <Link
         href={`/tools/${slug}`}
@@ -60,25 +79,39 @@ export function ToolCard({
     );
   }
 
-  return (
-    <div className="group relative flex flex-col p-6 rounded-xl bg-card border border-border hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
-      {(isNew || isPopular) && (
-        <div className="absolute top-4 right-4 flex gap-2">
-          {isNew && (
-            <Badge variant="secondary" className="bg-primary/10 text-primary text-xs">
-              New
-            </Badge>
-          )}
-          {isPopular && (
-            <Badge variant="secondary" className="bg-amber-500/10 text-amber-500 text-xs">
-              Popular
-            </Badge>
-          )}
-        </div>
-      )}
+  const cardContent = (
+    <div className={cn(
+      "group relative flex flex-col h-full p-6 rounded-xl bg-card border border-border transition-all duration-300",
+      hasPage
+        ? "hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 cursor-pointer"
+        : "opacity-70 cursor-not-allowed"
+    )}>
+      {/* Badges */}
+      <div className="absolute top-4 right-4 flex gap-2">
+        {!hasPage && (
+          <Badge variant="secondary" className="bg-muted text-muted-foreground text-xs">
+            Coming Soon
+          </Badge>
+        )}
+        {isNew && hasPage && (
+          <Badge variant="secondary" className="bg-primary/10 text-primary text-xs">
+            New
+          </Badge>
+        )}
+        {isPopular && hasPage && (
+          <Badge variant="secondary" className="bg-amber-500/10 text-amber-500 text-xs">
+            Popular
+          </Badge>
+        )}
+      </div>
 
       <div className="flex items-start gap-4">
-        <div className="p-3 rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+        <div className={cn(
+          "p-3 rounded-xl transition-colors",
+          hasPage
+            ? "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground"
+            : "bg-muted text-muted-foreground"
+        )}>
           <IconComponent className="h-6 w-6" />
         </div>
         <div className="flex-1 min-w-0">
@@ -98,12 +131,30 @@ export function ToolCard({
             </span>
           ))}
         </div>
-        <Link href={`/tools/${slug}`}>
+        {hasPage ? (
           <Button className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
             Open Tool
           </Button>
-        </Link>
+        ) : (
+          <Button
+            disabled
+            className="w-full opacity-50 cursor-not-allowed"
+            variant="secondary"
+          >
+            Coming Soon
+          </Button>
+        )}
       </div>
     </div>
   );
+
+  if (hasPage) {
+    return (
+      <Link href={`/tools/${slug}`} className="block h-full">
+        {cardContent}
+      </Link>
+    );
+  }
+
+  return cardContent;
 }

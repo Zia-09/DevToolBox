@@ -8,6 +8,7 @@ export interface Tool {
   tags: string[];
   isNew?: boolean;
   isPopular?: boolean;
+  hasPage?: boolean;
 }
 
 export const tools: Tool[] = [
@@ -20,6 +21,7 @@ export const tools: Tool[] = [
     category: 'Formatters',
     tags: ['json', 'format', 'validate', 'beautify'],
     isPopular: true,
+    hasPage: true,
   },
   {
     id: 'css-flexbox-generator',
@@ -30,6 +32,7 @@ export const tools: Tool[] = [
     category: 'Generators',
     tags: ['css', 'flexbox', 'layout', 'generator'],
     isPopular: true,
+    hasPage: true,
   },
   {
     id: 'git-command-builder',
@@ -41,6 +44,7 @@ export const tools: Tool[] = [
     tags: ['git', 'command', 'version control', 'cli'],
     isPopular: true,
     isNew: true,
+    hasPage: true,
   },
   {
     id: 'base64-encoder',
@@ -50,6 +54,7 @@ export const tools: Tool[] = [
     icon: 'Binary',
     category: 'Converters',
     tags: ['base64', 'encode', 'decode', 'converter'],
+    hasPage: true,
   },
   {
     id: 'color-converter',
@@ -59,6 +64,7 @@ export const tools: Tool[] = [
     icon: 'Palette',
     category: 'Converters',
     tags: ['color', 'hex', 'rgb', 'hsl', 'converter'],
+    hasPage: true,
   },
   {
     id: 'regex-tester',
@@ -69,6 +75,7 @@ export const tools: Tool[] = [
     category: 'Testers',
     tags: ['regex', 'regular expression', 'test', 'pattern'],
     isNew: true,
+    hasPage: true,
   },
   {
     id: 'uuid-generator',
@@ -78,6 +85,7 @@ export const tools: Tool[] = [
     icon: 'Fingerprint',
     category: 'Generators',
     tags: ['uuid', 'guid', 'generator', 'unique id'],
+    hasPage: true,
   },
   {
     id: 'yaml-to-json',
@@ -87,6 +95,7 @@ export const tools: Tool[] = [
     icon: 'FileCode',
     category: 'Converters',
     tags: ['yaml', 'json', 'convert', 'config'],
+    hasPage: true,
   },
   {
     id: 'css-grid-generator',
@@ -96,6 +105,7 @@ export const tools: Tool[] = [
     icon: 'Grid3x3',
     category: 'Generators',
     tags: ['css', 'grid', 'layout', 'generator'],
+    hasPage: true,
   },
   {
     id: 'markdown-editor',
@@ -106,6 +116,7 @@ export const tools: Tool[] = [
     category: 'Editors',
     tags: ['markdown', 'editor', 'preview', 'md'],
     isPopular: true,
+    hasPage: true,
   },
   {
     id: 'jwt-decoder',
@@ -115,6 +126,7 @@ export const tools: Tool[] = [
     icon: 'Key',
     category: 'Testers',
     tags: ['jwt', 'token', 'decode', 'auth'],
+    hasPage: true,
   },
   {
     id: 'diff-checker',
@@ -124,6 +136,7 @@ export const tools: Tool[] = [
     icon: 'GitCompare',
     category: 'Testers',
     tags: ['diff', 'compare', 'text', 'code'],
+    hasPage: true,
   },
 ];
 

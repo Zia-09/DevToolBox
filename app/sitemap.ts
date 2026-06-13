@@ -1,50 +1,25 @@
-import { MetadataRoute } from 'next';
 import { tools } from '@/lib/tools-data';
-import { blogPosts } from '@/lib/blog-data';
-
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://devtoolbox.io';
-
-export default function sitemap(): MetadataRoute.Sitemap {
-  const staticPages = [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 1,
+export default function sitemap() {
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://devtoolbox.io';
+  return [
+    { url: base, priority: 1.0 },
+    { 
+      url: `${base}/tools`, 
+      priority: 0.9 
     },
-    {
-      url: `${baseUrl}/tools`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.9,
+    { 
+      url: `${base}/blog`, 
+      priority: 0.7 
     },
-    {
-      url: `${baseUrl}/blog`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
+    { 
+      url: `${base}/about`, 
+      priority: 0.5 
     },
-    {
-      url: `${baseUrl}/about`,
+    ...tools.map(t => ({
+      url: `${base}/tools/${t.slug}`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
-      priority: 0.7,
-    },
+      priority: 0.8,
+    }))
   ];
-
-  const toolPages = tools.map((tool) => ({
-    url: `${baseUrl}/tools/${tool.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
-  }));
-
-  const blogPageRoutes = blogPosts.map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: new Date(post.date),
-    changeFrequency: 'monthly' as const,
-    priority: 0.6,
-  }));
-
-  return [...staticPages, ...toolPages, ...blogPageRoutes];
 }

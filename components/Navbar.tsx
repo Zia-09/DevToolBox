@@ -16,7 +16,7 @@ const navLinks = [
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    setIsMobileMenuOpen(false);
+    setOpen(false);
   }, [pathname]);
 
   return (
@@ -73,11 +73,11 @@ export function Navbar() {
           <div className="flex md:hidden items-center gap-2">
             <ThemeToggle />
             <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={() => setOpen(!open)}
               className="p-2 text-foreground hover:bg-accent rounded-lg transition-colors"
               aria-label="Toggle menu"
             >
-              {isMobileMenuOpen ? (
+              {open ? (
                 <X className="h-5 w-5" />
               ) : (
                 <Menu className="h-5 w-5" />
@@ -87,13 +87,14 @@ export function Navbar() {
         </div>
 
         {/* Mobile menu */}
-        {isMobileMenuOpen && (
+        {open && (
           <div className="md:hidden py-4 border-t border-border">
             <div className="flex flex-col gap-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
+                  onClick={() => setOpen(false)}
                   className={cn(
                     'px-4 py-2 text-sm font-medium rounded-lg transition-colors',
                     pathname === link.href

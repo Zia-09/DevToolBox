@@ -68,10 +68,10 @@ export function SearchBar({
       {query && (
         <button
           onClick={handleClear}
-          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-accent transition-colors"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-lg leading-none"
           aria-label="Clear search"
         >
-          <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+          ×
         </button>
       )}
     </div>

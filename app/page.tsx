@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Zap, Shield, Copy, Wifi, ArrowRight, Mail, Clock, Code } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -38,23 +38,24 @@ const features = [
 
 export default function Home() {
   const [filteredTools, setFilteredTools] = useState<Tool[]>(tools);
-  const [recentTools, setRecentTools] = useState<Tool[]>([]);
+  const [recent, setRecent] = useState<string[]>([]);
   const [email, setEmail] = useState('');
 
   useEffect(() => {
-    // Load recently used tools from localStorage
     try {
-      const recentIds = JSON.parse(localStorage.getItem('devtoolbox_recent') || '[]');
-      if (recentIds.length > 0) {
-        const recent = recentIds
-          .map((id: string) => tools.find(t => t.id === id))
-          .filter(Boolean) as Tool[];
-        setRecentTools(recent.slice(0, 4));
-      }
-    } catch {
-      // Ignore errors from localStorage
-    }
+      setRecent(JSON.parse(
+        localStorage.getItem(
+          'devtoolbox_recent'
+        ) || '[]'
+      ));
+    } catch {}
   }, []);
+
+  const recentTools = useMemo(() => {
+    return recent
+      .map(slug => tools.find(t => t.slug === slug))
+      .filter((t): t is Tool => !!t);
+  }, [recent]);
 
   const handleSearch = (query: string) => {
     if (!query.trim()) {
@@ -77,7 +78,7 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+      <section className="pt-16 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
             Developer Tools That Actually{' '}
@@ -98,7 +99,7 @@ export default function Home() {
       </div>
 
       {/* Recently Used Tools */}
-      {recentTools.length > 0 && (
+      {recent.length > 0 && (
         <section className="py-8 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center gap-2 mb-4">
