@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
-  Braces,
   Download,
   Trash2,
   AlertCircle,
@@ -11,8 +10,8 @@ import {
   Minimize2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { getToolBySlug } from '@/lib/tools-data';
 import { formatBytes } from '@/lib/utils';
 import { trackEvent } from '@/lib/analytics';
 import { toast } from 'sonner';
@@ -48,7 +47,13 @@ function TreeNode({ data, depth = 0 }: { data: unknown; depth?: number }) {
       </button>
       <span className="text-gray-400">{openBracket}</span>
       {!open && (
-        <span className="text-gray-500 cursor-pointer" onClick={() => setOpen(true)}>
+        <span 
+          className="text-gray-500 cursor-pointer" 
+          onClick={() => setOpen(true)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setOpen(true); }}
+        >
           {' '}{entries.length} {isArr ? 'items' : 'keys'}{' '}
         </span>
       )}
@@ -77,7 +82,6 @@ function TreeNode({ data, depth = 0 }: { data: unknown; depth?: number }) {
 }
 
 // ─── Syntax Highlighting ──────────────────────────────────────────────────────
-// Uses classes defined in globals.css (.json-key, .json-string, .json-number, .json-boolean, .json-null)
 
 function syntaxHighlight(raw: string): string {
   // Escape HTML entities first
@@ -86,12 +90,11 @@ function syntaxHighlight(raw: string): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
 
-  // Single-pass token replacement (avoids double-matching inside already-inserted spans)
+  // Single-pass token replacement
   return escaped.replace(
     /("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(?:true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g,
     (match) => {
       if (/^"/.test(match)) {
-        // key (followed by colon) vs string value
         return match.endsWith(':')
           ? `<span class="json-key">${match}</span>`
           : `<span class="json-string">${match}</span>`;
@@ -114,8 +117,6 @@ export default function JsonFormatterTool() {
   const [isValid, setIsValid] = useState(false);
   const [parsedJson, setParsedJson] = useState<unknown>(null);
   const [autoFormat, setAutoFormat] = useState(true);
-
-  const tool = getToolBySlug('json-formatter');
 
   // Track recently used
   useEffect(() => {
@@ -236,37 +237,28 @@ export default function JsonFormatterTool() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 rounded-lg bg-primary/10 text-primary">
-            <Braces className="h-5 w-5" />
-          </div>
-          <h1 className="text-3xl font-bold">{tool?.name ?? 'JSON Formatter'}</h1>
-        </div>
-        <p className="text-muted-foreground">{tool?.description}</p>
-      </div>
-
+    <div className="py-4">
       {/* Editor */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* ── Input ── */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold">Input</h2>
+            <Label htmlFor="json-input" className="font-semibold text-base">Input</Label>
             <Button
               variant={autoFormat ? 'default' : 'outline'}
               size="sm"
               onClick={() => setAutoFormat(v => !v)}
+              aria-label={`Toggle auto formatting: currently ${autoFormat ? 'enabled' : 'disabled'}`}
             >
               Auto Format: {autoFormat ? 'On' : 'Off'}
             </Button>
           </div>
           <Textarea
+            id="json-input"
             value={input}
             onChange={e => setInput(e.target.value)}
             placeholder={'Paste your JSON here…\n\nExample: {"name":"DevToolbox","version":"1.0"}'}
-            className="min-h-[420px] font-mono text-sm bg-card resize-none leading-6"
+            className="min-h-[420px] font-mono text-sm bg-card resize-none leading-6 text-foreground"
             spellCheck={false}
           />
         </div>
@@ -275,7 +267,7 @@ export default function JsonFormatterTool() {
         <div className="space-y-3">
           {/* Toolbar */}
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <h2 className="font-semibold">Output</h2>
+            <Label htmlFor="json-output-container" className="font-semibold text-base">Output</Label>
             <div className="flex flex-wrap gap-2 items-center">
               <Button variant="secondary" size="sm" onClick={handleFormat} disabled={!input.trim()}>
                 <AlignLeft className="h-4 w-4 mr-1" /> Format
@@ -289,13 +281,14 @@ export default function JsonFormatterTool() {
                 className={`px-3 py-1.5 text-sm font-medium rounded-lg text-white transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed ${
                   copied ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'
                 }`}
+                aria-label="Copy formatted JSON output"
               >
                 {copied ? '✓ Copied!' : 'Copy'}
               </button>
               <Button variant="secondary" size="sm" onClick={handleDownload} disabled={!output}>
                 <Download className="h-4 w-4 mr-1" /> Download
               </Button>
-              <Button variant="secondary" size="sm" onClick={handleClear}>
+              <Button variant="secondary" size="sm" onClick={handleClear} aria-label="Clear input and output">
                 <Trash2 className="h-4 w-4 mr-1" /> Clear
               </Button>
             </div>
@@ -303,26 +296,27 @@ export default function JsonFormatterTool() {
 
           {/* Status */}
           {error && (
-            <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 text-destructive border border-destructive/20">
+            <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 text-destructive border border-destructive/20" role="alert">
               <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
               <span className="text-sm font-mono break-all">{error}</span>
             </div>
           )}
           {isValid && output && !error && (
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-green-500/10 text-green-500 border border-green-500/20">
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-green-500/10 text-green-500 border border-green-500/20" role="status">
               <CheckCircle className="h-4 w-4 flex-shrink-0" />
               <span className="text-sm">Valid JSON</span>
             </div>
           )}
 
           {/* Output pane */}
-          <div className="min-h-[420px] bg-card rounded-lg border border-border overflow-hidden flex flex-col">
+          <div id="json-output-container" className="min-h-[420px] bg-card rounded-lg border border-border overflow-hidden flex flex-col">
             {/* View toggle */}
             <div className="flex items-center gap-2 p-2 border-b border-border bg-muted/30">
               <Button
                 variant={!isTreeView ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setIsTreeView(false)}
+                aria-label="Switch output to code view"
               >
                 Code View
               </Button>
@@ -331,6 +325,7 @@ export default function JsonFormatterTool() {
                 size="sm"
                 onClick={() => setIsTreeView(true)}
                 disabled={!parsedJson}
+                aria-label="Switch output to tree view"
               >
                 Tree View
               </Button>
@@ -338,14 +333,14 @@ export default function JsonFormatterTool() {
 
             {/* Content */}
             {isTreeView && parsedJson ? (
-              <div className="flex-1 overflow-auto p-4">
+              <div className="flex-1 overflow-auto p-4" tabIndex={0} aria-label="JSON Tree View Representation">
                 <TreeNode data={parsedJson} />
               </div>
             ) : (
               <div className="flex flex-1 overflow-hidden">
                 {/* Line numbers */}
                 {output && (
-                  <div className="flex-shrink-0 py-4 px-3 bg-muted/20 text-right select-none border-r border-border overflow-auto">
+                  <div className="flex-shrink-0 py-4 px-3 bg-muted/20 text-right select-none border-r border-border overflow-auto" aria-hidden="true">
                     {lineNumbers.map(n => (
                       <div key={n} className="text-xs text-muted-foreground leading-6 font-mono">
                         {n}
@@ -354,7 +349,7 @@ export default function JsonFormatterTool() {
                   </div>
                 )}
                 {/* Code */}
-                <div className="flex-1 overflow-auto p-4">
+                <div className="flex-1 overflow-auto p-4" tabIndex={0} aria-label="JSON Code View Output">
                   {output ? (
                     <pre
                       className="text-sm font-mono whitespace-pre leading-6"
@@ -373,7 +368,7 @@ export default function JsonFormatterTool() {
       </div>
 
       {/* Stats */}
-      <div className="mt-4 flex items-center gap-6 text-sm text-muted-foreground">
+      <div className="mt-4 flex items-center gap-6 text-sm text-muted-foreground" role="status" aria-label="Output metrics">
         <span>{stats.chars} chars</span>
         <span>{stats.lines} lines</span>
         <span>{stats.size}</span>

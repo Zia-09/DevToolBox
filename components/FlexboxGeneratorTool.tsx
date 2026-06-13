@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Layout } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import {
@@ -73,8 +72,6 @@ export default function FlexboxGeneratorTool() {
   const [copiedCss, setCopiedCss] = useState(false);
   const [copiedInline, setCopiedInline] = useState(false);
 
-  const tool = getToolBySlug('css-flexbox-generator');
-
   // Track recently used
   useEffect(() => {
     try {
@@ -141,27 +138,18 @@ export default function FlexboxGeneratorTool() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 rounded-lg bg-primary/10 text-primary">
-            <Layout className="h-5 w-5" />
-          </div>
-          <h1 className="text-3xl font-bold">{tool?.name ?? 'CSS Flexbox Generator'}</h1>
-        </div>
-        <p className="text-muted-foreground">{tool?.description}</p>
-      </div>
-
+    <div className="py-4">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ── Controls ── */}
         <div className="space-y-5 p-6 bg-card rounded-xl border border-border">
           <h2 className="font-semibold text-lg">Controls</h2>
 
           <div className="space-y-2">
-            <Label>Flex Direction</Label>
+            <Label htmlFor="flex-dir-select">Flex Direction</Label>
             <Select value={settings.flexDirection} onValueChange={v => set('flexDirection', v)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger id="flex-dir-select" aria-label="Select flex direction">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 {FLEX_DIRECTIONS.map(o => (
                   <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
@@ -171,9 +159,11 @@ export default function FlexboxGeneratorTool() {
           </div>
 
           <div className="space-y-2">
-            <Label>Justify Content</Label>
+            <Label htmlFor="justify-select">Justify Content</Label>
             <Select value={settings.justifyContent} onValueChange={v => set('justifyContent', v)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger id="justify-select" aria-label="Select justify content">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 {JUSTIFY_CONTENT.map(o => (
                   <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
@@ -183,9 +173,11 @@ export default function FlexboxGeneratorTool() {
           </div>
 
           <div className="space-y-2">
-            <Label>Align Items</Label>
+            <Label htmlFor="align-select">Align Items</Label>
             <Select value={settings.alignItems} onValueChange={v => set('alignItems', v)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger id="align-select" aria-label="Select align items">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 {ALIGN_ITEMS.map(o => (
                   <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
@@ -195,9 +187,11 @@ export default function FlexboxGeneratorTool() {
           </div>
 
           <div className="space-y-2">
-            <Label>Flex Wrap</Label>
+            <Label htmlFor="wrap-select">Flex Wrap</Label>
             <Select value={settings.flexWrap} onValueChange={v => set('flexWrap', v)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger id="wrap-select" aria-label="Select flex wrap">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 {FLEX_WRAP.map(o => (
                   <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
@@ -208,25 +202,29 @@ export default function FlexboxGeneratorTool() {
 
           <div className="space-y-3">
             <div className="flex justify-between">
-              <Label>Gap</Label>
+              <Label htmlFor="gap-slider">Gap</Label>
               <span className="text-sm text-muted-foreground font-mono">{settings.gap}px</span>
             </div>
             <Slider
+              id="gap-slider"
               value={[settings.gap]}
               onValueChange={([v]) => set('gap', v)}
               min={0} max={48} step={2}
+              aria-label="Flex container gap slider"
             />
           </div>
 
           <div className="space-y-3">
             <div className="flex justify-between">
-              <Label>Child Boxes</Label>
+              <Label htmlFor="count-slider">Child Boxes</Label>
               <span className="text-sm text-muted-foreground font-mono">{settings.count}</span>
             </div>
             <Slider
+              id="count-slider"
               value={[settings.count]}
               onValueChange={([v]) => set('count', v)}
               min={1} max={8} step={1}
+              aria-label="Child boxes count slider"
             />
           </div>
         </div>
@@ -235,7 +233,7 @@ export default function FlexboxGeneratorTool() {
         <div className="space-y-4">
           <h2 className="font-semibold text-lg">Live Preview</h2>
           <div className="rounded-xl border border-border bg-muted/20 overflow-auto min-h-[300px] p-4 flex items-center justify-center">
-            <div style={previewStyle}>
+            <div style={previewStyle} role="region" aria-label="Flexbox container preview">
               {Array.from({ length: settings.count }, (_, i) => (
                 <div
                   key={i}
@@ -253,6 +251,7 @@ export default function FlexboxGeneratorTool() {
                     flexShrink: 0,
                     boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
                   }}
+                  aria-label={`Box ${i + 1}`}
                 >
                   {i + 1}
                 </div>
@@ -289,13 +288,14 @@ export default function FlexboxGeneratorTool() {
               className={`px-3 py-1.5 text-sm font-medium rounded-lg text-white transition-colors duration-200 ${
                 copiedCss ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'
               }`}
+              aria-label="Copy CSS code"
             >
               {copiedCss ? '✓ Copied!' : 'Copy CSS'}
             </button>
           </div>
 
           <div className="bg-card rounded-xl border border-border overflow-hidden">
-            <pre className="p-4 text-sm font-mono overflow-auto text-foreground leading-6">{cssCode}</pre>
+            <pre className="p-4 text-sm font-mono overflow-auto text-foreground leading-6" tabIndex={0} aria-label="Generated CSS code block">{cssCode}</pre>
           </div>
 
           <div className="space-y-2">
@@ -306,12 +306,13 @@ export default function FlexboxGeneratorTool() {
                 className={`px-3 py-1.5 text-sm font-medium rounded-lg text-white transition-colors duration-200 ${
                   copiedInline ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'
                 }`}
+                aria-label="Copy inline CSS code"
               >
                 {copiedInline ? '✓ Copied!' : 'Copy'}
               </button>
             </div>
             <div className="bg-card rounded-lg border border-border p-3">
-              <code className="text-xs font-mono text-muted-foreground break-all leading-5">
+              <code className="text-xs font-mono text-muted-foreground break-all leading-5" tabIndex={0} aria-label="Generated inline CSS code block">
                 {inlineCss}
               </code>
             </div>

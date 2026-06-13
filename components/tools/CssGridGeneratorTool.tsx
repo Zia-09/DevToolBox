@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Grid } from 'lucide-react';
 import { getToolBySlug } from '@/lib/tools-data';
 import { toast } from 'sonner';
 
@@ -11,8 +10,6 @@ export default function CssGridGeneratorTool() {
   const [rowGap, setRowGap] = useState(16);
   const [copiedCss, setCopiedCss] = useState(false);
   const [copiedHtml, setCopiedHtml] = useState(false);
-  
-  const tool = getToolBySlug('css-grid-generator');
 
   useEffect(() => {
     try {
@@ -48,15 +45,7 @@ ${Array.from({ length: totalItems }, (_, i) => `  <div className="grid-item">${i
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="p-2 rounded-lg bg-primary/10 text-primary">
-          <Grid className="h-5 w-5" />
-        </div>
-        <h1 className="text-3xl font-bold">{tool?.name}</h1>
-      </div>
-      <p className="text-muted-foreground mb-8">{tool?.description}</p>
-
+    <div className="py-4">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Controls */}
         <div className="lg:col-span-1 bg-card rounded-xl border border-border p-6 space-y-6">
@@ -64,57 +53,61 @@ ${Array.from({ length: totalItems }, (_, i) => `  <div className="grid-item">${i
 
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="font-medium">Columns ({columns})</span>
+              <label htmlFor="grid-cols-input" className="font-medium">Columns ({columns})</label>
             </div>
             <input
+              id="grid-cols-input"
               type="range"
               min={1}
               max={12}
               value={columns}
               onChange={(e) => setColumns(+e.target.value)}
-              className="w-full"
+              className="w-full h-2 rounded bg-secondary appearance-none cursor-pointer accent-primary"
             />
           </div>
 
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="font-medium">Rows ({rows})</span>
+              <label htmlFor="grid-rows-input" className="font-medium">Rows ({rows})</label>
             </div>
             <input
+              id="grid-rows-input"
               type="range"
               min={1}
               max={12}
               value={rows}
               onChange={(e) => setRows(+e.target.value)}
-              className="w-full"
+              className="w-full h-2 rounded bg-secondary appearance-none cursor-pointer accent-primary"
             />
           </div>
 
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="font-medium">Column Gap ({columnGap}px)</span>
+              <label htmlFor="grid-colgap-input" className="font-medium">Column Gap ({columnGap}px)</label>
             </div>
             <input
+              id="grid-colgap-input"
               type="range"
               min={0}
               max={80}
               value={columnGap}
               onChange={(e) => setColumnGap(+e.target.value)}
-              className="w-full"
+              className="w-full h-2 rounded bg-secondary appearance-none cursor-pointer accent-primary"
             />
           </div>
 
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="font-medium">Row Gap ({rowGap}px)</span>
+              <label htmlFor="grid-rowgap-input" className="font-medium">Row Gap ({rowGap}px)</label>
             </div>
             <input
+              id="grid-rowgap-input"
               type="range"
               min={0}
               max={80}
               value={rowGap}
               onChange={(e) => setRowGap(+e.target.value)}
-              className="w-full"
+              className="w-full h-2 rounded bg-secondary appearance-none cursor-pointer accent-primary"
             />
           </div>
         </div>
@@ -122,9 +115,10 @@ ${Array.from({ length: totalItems }, (_, i) => `  <div className="grid-item">${i
         {/* Live Preview */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-card rounded-xl border border-border p-6">
-            <h2 className="font-semibold text-lg mb-4">Live Preview</h2>
+            <h2 id="grid-preview-label" className="font-semibold text-lg mb-4">Live Preview</h2>
             <div
               className="bg-muted/20 border border-border rounded-lg p-4 min-h-[300px]"
+              aria-labelledby="grid-preview-label"
               style={{
                 display: 'grid',
                 gridTemplateColumns: `repeat(${columns}, 1fr)`,
@@ -148,34 +142,46 @@ ${Array.from({ length: totalItems }, (_, i) => `  <div className="grid-item">${i
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <label className="font-semibold text-sm">CSS rules</label>
+                <label id="grid-css-label" htmlFor="grid-css-pre" className="font-semibold text-sm">CSS rules</label>
                 <button
                   onClick={() => copyText(cssCode, 'css')}
                   className={`text-xs px-2 py-1 rounded text-white transition-colors ${
                     copiedCss ? 'bg-green-600' : 'bg-blue-600 hover:bg-blue-700'
                   }`}
+                  aria-label="Copy CSS rules"
                 >
                   {copiedCss ? '✓ Copied!' : 'Copy'}
                 </button>
               </div>
-              <pre className="p-3 bg-muted/30 border border-border rounded-lg font-mono text-xs overflow-auto h-[120px]">
+              <pre
+                id="grid-css-pre"
+                tabIndex={0}
+                aria-labelledby="grid-css-label"
+                className="p-3 bg-muted/30 border border-border rounded-lg font-mono text-xs overflow-auto h-[120px] focus:outline-none focus:ring-2 focus:ring-primary"
+              >
                 {cssCode}
               </pre>
             </div>
 
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <label className="font-semibold text-sm">HTML structure</label>
+                <label id="grid-html-label" htmlFor="grid-html-pre" className="font-semibold text-sm">HTML structure</label>
                 <button
                   onClick={() => copyText(htmlCode, 'html')}
                   className={`text-xs px-2 py-1 rounded text-white transition-colors ${
                     copiedHtml ? 'bg-green-600' : 'bg-blue-600 hover:bg-blue-700'
                   }`}
+                  aria-label="Copy HTML structure"
                 >
                   {copiedHtml ? '✓ Copied!' : 'Copy'}
                 </button>
               </div>
-              <pre className="p-3 bg-muted/30 border border-border rounded-lg font-mono text-xs overflow-auto h-[120px]">
+              <pre
+                id="grid-html-pre"
+                tabIndex={0}
+                aria-labelledby="grid-html-label"
+                className="p-3 bg-muted/30 border border-border rounded-lg font-mono text-xs overflow-auto h-[120px] focus:outline-none focus:ring-2 focus:ring-primary"
+              >
                 {htmlCode}
               </pre>
             </div>

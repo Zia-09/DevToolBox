@@ -1,12 +1,4 @@
-declare global {
-  interface Window {
-    gtag?: (...args: unknown[]) => void;
-    plausible?: (
-      event: string, 
-      opts?: object
-    ) => void;
-  }
-}
+'use client';
 
 export function trackEvent(
   name: string,
@@ -15,13 +7,14 @@ export function trackEvent(
   if (typeof window === 'undefined') return;
   try {
     window.gtag?.('event', name, params);
-    window.plausible?.(
-      name, { props: params }
-    );
+    (window as any).plausible?.(name, { props: params });
   } catch {}
 }
 
 export const analytics = {
+  toolOpened(toolName: string, toolSlug: string) {
+    trackEvent('tool_opened', { tool_name: toolName, tool_slug: toolSlug });
+  },
   searchUsed(query: string) {
     trackEvent('search_used', { query });
   },
@@ -30,5 +23,15 @@ export const analytics = {
   },
   copyClicked(toolName: string, element: string) {
     trackEvent('copy_clicked', { tool_name: toolName, element });
-  }
+  },
+  faqExpanded(toolName: string, question: string) {
+    trackEvent('faq_expanded', { tool_name: toolName, question });
+  },
 };
+
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+    plausible?: (event: string, opts?: object) => void;
+  }
+}

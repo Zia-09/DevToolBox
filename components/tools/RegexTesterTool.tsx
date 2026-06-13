@@ -1,16 +1,13 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
-import { SearchCode } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { getToolBySlug } from '@/lib/tools-data';
-import { toast } from 'sonner';
 
 export default function RegexTesterTool() {
   const [regex, setRegex] = useState('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}');
   const [flags, setFlags] = useState('g');
   const [text, setText] = useState('Contact us at support@devtoolbox.io or info@example.com for help.');
-  const tool = getToolBySlug('regex-tester');
 
   useEffect(() => {
     try {
@@ -59,25 +56,20 @@ export default function RegexTesterTool() {
   }, [text, matches, error]);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="p-2 rounded-lg bg-primary/10 text-primary">
-          <SearchCode className="h-5 w-5" />
-        </div>
-        <h1 className="text-3xl font-bold">{tool?.name}</h1>
-      </div>
-      <p className="text-muted-foreground mb-8">{tool?.description}</p>
-
+    <div className="py-4">
       <div className="grid grid-cols-1 gap-6">
         {/* Pattern & Flags */}
         <div className="bg-card rounded-xl border border-border p-6 space-y-4">
-          <h2 className="font-semibold text-lg">Regular Expression</h2>
+          <h2 className="font-semibold text-lg">Regular Expression Configuration</h2>
           <div className="flex gap-4">
             <div className="flex-1 space-y-2">
-              <span className="text-xs text-muted-foreground">Pattern</span>
+              <label htmlFor="regex-pattern-input" className="text-xs font-semibold text-muted-foreground block">
+                Pattern
+              </label>
               <div className="relative flex items-center">
-                <span className="absolute left-3 text-muted-foreground font-mono">/</span>
+                <span className="absolute left-3 text-muted-foreground font-mono" aria-hidden="true">/</span>
                 <Input
+                  id="regex-pattern-input"
                   value={regex}
                   onChange={(e) => setRegex(e.target.value)}
                   className="pl-6 font-mono text-sm"
@@ -85,21 +77,28 @@ export default function RegexTesterTool() {
                 />
               </div>
             </div>
-            <div className="w-24 space-y-2">
-              <span className="text-xs text-muted-foreground">Flags</span>
+            <div className="w-28 space-y-2">
+              <label htmlFor="regex-flags-input" className="text-xs font-semibold text-muted-foreground block">
+                Flags
+              </label>
               <div className="relative flex items-center">
-                <span className="absolute left-2 text-muted-foreground font-mono">/</span>
+                <span className="absolute left-3 text-muted-foreground font-mono" aria-hidden="true">/</span>
                 <Input
+                  id="regex-flags-input"
                   value={flags}
                   onChange={(e) => setFlags(e.target.value.replace(/[^gimy]/g, ''))}
-                  className="pl-4 font-mono text-sm text-center"
+                  className="pl-6 font-mono text-sm text-center"
                   placeholder="g"
                 />
               </div>
             </div>
           </div>
           {error && (
-            <div className="p-3 text-xs bg-destructive/10 text-destructive border border-destructive/20 rounded-lg font-mono">
+            <div
+              className="p-3 text-xs bg-destructive/10 text-destructive border border-destructive/20 rounded-lg font-mono"
+              role="alert"
+              aria-live="assertive"
+            >
               {error}
             </div>
           )}
@@ -108,8 +107,9 @@ export default function RegexTesterTool() {
         {/* Test Text & Highlighted Preview */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="font-semibold">Test String</label>
+            <label htmlFor="regex-test-string" className="font-semibold text-sm">Test String</label>
             <Textarea
+              id="regex-test-string"
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Enter text to test your regular expression against..."
@@ -119,13 +119,16 @@ export default function RegexTesterTool() {
 
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <label className="font-semibold">Match Results</label>
-              <span className="text-xs text-muted-foreground bg-primary/10 text-primary px-2 py-0.5 rounded-full font-mono font-medium">
+              <label id="regex-match-results-label" className="font-semibold text-sm">Match Results</label>
+              <span className="text-xs text-muted-foreground bg-primary/10 text-primary px-2 py-0.5 rounded-full font-mono font-medium" aria-live="polite">
                 {matches.length} {matches.length === 1 ? 'match' : 'matches'}
               </span>
             </div>
             <div
-              className="min-h-[250px] p-3 rounded-lg border border-border bg-muted/30 font-mono text-sm overflow-auto whitespace-pre-wrap leading-6"
+              id="regex-match-results-preview"
+              tabIndex={0}
+              aria-labelledby="regex-match-results-label"
+              className="min-h-[250px] p-3 rounded-lg border border-border bg-muted/30 font-mono text-sm overflow-auto whitespace-pre-wrap leading-6 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               dangerouslySetInnerHTML={{ __html: highlightedText || '<span class="text-muted-foreground">No matches found.</span>' }}
             />
           </div>

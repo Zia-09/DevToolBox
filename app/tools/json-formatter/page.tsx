@@ -1,22 +1,18 @@
-import { tools } from '@/lib/tools-data';
+import { notFound } from 'next/navigation';
+import { getToolBySlug } from '@/lib/tools-data';
+import { generateToolMetadata } from '@/lib/metadata';
+import { ToolPageLayout } from '@/components/ToolPageLayout';
 import JsonFormatterTool from '@/components/JsonFormatterTool';
 
-const tool = tools.find(t => t.slug === 'json-formatter');
+const tool = getToolBySlug('json-formatter');
+if (!tool) notFound();
 
-export const metadata = {
-  title: `${tool?.name} — DevToolbox`,
-  description: tool?.description,
-  openGraph: {
-    title: `${tool?.name} — DevToolbox`,
-    description: tool?.description,
-    url: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/json-formatter`,
-    type: 'website',
-  },
-  alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/json-formatter`,
-  },
-};
+export const metadata = generateToolMetadata(tool!);
 
 export default function JsonFormatterPage() {
-  return <JsonFormatterTool />;
+  return (
+    <ToolPageLayout tool={tool!}>
+      <JsonFormatterTool />
+    </ToolPageLayout>
+  );
 }

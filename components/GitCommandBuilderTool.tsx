@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { GitBranch } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -117,6 +116,7 @@ function ReferenceRow({
           className={`px-3 py-1.5 text-xs font-medium rounded-lg text-white transition-colors duration-200 ${
             copied ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'
           }`}
+          aria-label={`Copy Git command: ${command}`}
         >
           {copied ? '✓ Copied!' : 'Copy'}
         </button>
@@ -132,8 +132,6 @@ export default function GitCommandBuilderTool() {
   const [remoteUrl, setRemoteUrl] = useState('');
   const [remoteName, setRemoteName] = useState('origin');
   const [copied, setCopied] = useState(false);
-
-  const tool = getToolBySlug('git-command-builder');
 
   // Recently used tools tracking
   useEffect(() => {
@@ -250,20 +248,7 @@ export default function GitCommandBuilderTool() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          {tool && (
-            <div className="p-2 rounded-lg bg-primary/10 text-primary">
-              <GitBranch className="h-5 w-5" />
-            </div>
-          )}
-          <h1 className="text-3xl font-bold">{tool?.name || 'Git Command Builder'}</h1>
-        </div>
-        <p className="text-muted-foreground">{tool?.description}</p>
-      </div>
-
+    <div className="py-4">
       {/* Step-based Wizard */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
         {/* Steps Panel */}
@@ -272,11 +257,11 @@ export default function GitCommandBuilderTool() {
             <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold text-sm">
               1
             </div>
-            <h2 className="font-semibold">What do you want to do?</h2>
+            <Label htmlFor="git-operation-select" className="font-semibold text-base">What do you want to do?</Label>
           </div>
 
           <Select value={operation} onValueChange={(v) => setOperation(v as GitOperation)}>
-            <SelectTrigger className="w-full">
+            <SelectTrigger id="git-operation-select" className="w-full text-foreground" aria-label="Select Git operation">
               <SelectValue placeholder="Select an operation" />
             </SelectTrigger>
             <SelectContent>
@@ -353,13 +338,14 @@ export default function GitCommandBuilderTool() {
 
           <div className="bg-card rounded-xl border border-border overflow-hidden">
             <div className="p-4 bg-muted/30 flex items-center justify-between gap-4">
-              <code className="text-sm font-mono text-primary break-all">{command}</code>
+              <code id="git-command-output-code" className="text-sm font-mono text-primary break-all">{command}</code>
               <button
                 onClick={() => copy(command)}
                 disabled={!command}
                 className={`flex-shrink-0 px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg text-white transition-colors duration-200 ${
                   copied ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
+                aria-label="Copy generated Git command"
               >
                 {copied ? '✓ Copied!' : 'Copy'}
               </button>
@@ -384,9 +370,9 @@ export default function GitCommandBuilderTool() {
           <table className="w-full">
             <thead className="bg-muted/30">
               <tr>
-                <th className="text-left px-6 py-3 text-sm font-medium">Command</th>
-                <th className="text-left px-6 py-3 text-sm font-medium">Description</th>
-                <th className="w-32 py-3"></th>
+                <th scope="col" className="text-left px-6 py-3 text-sm font-medium">Command</th>
+                <th scope="col" className="text-left px-6 py-3 text-sm font-medium">Description</th>
+                <th scope="col" className="w-32 py-3"><span className="sr-only">Actions</span></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">

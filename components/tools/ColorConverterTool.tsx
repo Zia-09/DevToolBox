@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Palette } from 'lucide-react';
 import { getToolBySlug } from '@/lib/tools-data';
 import { toast } from 'sonner';
 
@@ -40,7 +39,6 @@ export default function ColorConverterTool() {
   const [hex, setHex] = useState('#3B82F6');
   const [rgb, setRgb] = useState({ r: 59, g: 130, b: 246 });
   const [hsl, setHsl] = useState({ h: 217, s: 91, l: 60 });
-  const tool = getToolBySlug('color-converter');
 
   useEffect(() => {
     try {
@@ -75,9 +73,12 @@ export default function ColorConverterTool() {
     toast.success('Copied: ' + text);
   };
 
-  const CopyBtn = ({ text }: { text: string }) => (
-    <button onClick={() => copy(text)}
-      className="text-xs px-2 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white transition-colors">
+  const CopyBtn = ({ text, label }: { text: string; label: string }) => (
+    <button
+      onClick={() => copy(text)}
+      aria-label={`Copy ${label} code`}
+      className="text-xs px-2 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+    >
       Copy
     </button>
   );
@@ -85,23 +86,26 @@ export default function ColorConverterTool() {
   const presets = ['#EF4444','#F97316','#EAB308','#22C55E','#3B82F6','#8B5CF6','#EC4899','#14B8A6','#000000','#FFFFFF'];
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="p-2 rounded-lg bg-primary/10 text-primary"><Palette className="h-5 w-5" /></div>
-        <h1 className="text-3xl font-bold">{tool?.name}</h1>
-      </div>
-      <p className="text-muted-foreground mb-8">{tool?.description}</p>
-
+    <div className="max-w-3xl mx-auto py-4">
       {/* Color Preview */}
-      <div className="h-32 rounded-xl mb-6 border border-border shadow-lg transition-colors duration-200"
-        style={{ background: isValidHex(hex) ? hex : '#3B82F6' }} />
+      <div
+        className="h-32 rounded-xl mb-6 border border-border shadow-lg transition-colors duration-200"
+        style={{ background: isValidHex(hex) ? hex : '#3B82F6' }}
+        role="img"
+        aria-label={`Color preview showing ${hex}`}
+      />
 
       {/* Presets */}
-      <div className="flex gap-2 flex-wrap mb-6">
+      <div className="flex gap-2 flex-wrap mb-6" aria-label="Color presets">
         {presets.map(p => (
-          <button key={p} onClick={() => updateFromHex(p)}
-            className="w-8 h-8 rounded-lg border-2 border-border hover:scale-110 transition-transform shadow"
-            style={{ background: p }} title={p} />
+          <button
+            key={p}
+            onClick={() => updateFromHex(p)}
+            className="w-8 h-8 rounded-lg border-2 border-border hover:scale-110 transition-transform shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            style={{ background: p }}
+            aria-label={`Set color to preset ${p}`}
+            title={p}
+          />
         ))}
       </div>
 
@@ -110,14 +114,25 @@ export default function ColorConverterTool() {
         {/* HEX */}
         <div className="bg-card rounded-xl border border-border p-4">
           <div className="flex items-center justify-between mb-2">
-            <label className="font-semibold">HEX</label>
-            <CopyBtn text={hex} />
+            <label htmlFor="hex-text-input" className="font-semibold">HEX</label>
+            <CopyBtn text={hex} label="HEX" />
           </div>
           <div className="flex gap-3 items-center">
-            <input type="color" value={isValidHex(hex) ? hex : '#3B82F6'} onChange={e => updateFromHex(e.target.value)}
-              className="w-12 h-10 rounded cursor-pointer border-0 bg-transparent" />
-            <input value={hex} onChange={e => updateFromHex(e.target.value)}
-              className="flex-1 font-mono bg-muted/30 border border-border rounded-lg px-3 py-2 text-sm uppercase" />
+            <input
+              type="color"
+              id="hex-color-picker"
+              value={isValidHex(hex) ? hex : '#3B82F6'}
+              onChange={e => updateFromHex(e.target.value)}
+              className="w-12 h-10 rounded cursor-pointer border-0 bg-transparent"
+              aria-label="Color picker tool"
+            />
+            <input
+              id="hex-text-input"
+              value={hex}
+              onChange={e => updateFromHex(e.target.value)}
+              className="flex-1 font-mono bg-muted/30 border border-border rounded-lg px-3 py-2 text-sm uppercase"
+              aria-label="Hex color string input"
+            />
           </div>
         </div>
 
@@ -125,15 +140,30 @@ export default function ColorConverterTool() {
         <div className="bg-card rounded-xl border border-border p-4">
           <div className="flex items-center justify-between mb-3">
             <label className="font-semibold">RGB</label>
-            <CopyBtn text={`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`} />
+            <CopyBtn text={`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`} label="RGB" />
           </div>
-          <div className="font-mono text-sm text-muted-foreground mb-3">rgb({rgb.r}, {rgb.g}, {rgb.b})</div>
+          <div className="font-mono text-sm text-muted-foreground mb-3" aria-live="polite">rgb({rgb.r}, {rgb.g}, {rgb.b})</div>
           {(['r','g','b'] as const).map(k => (
             <div key={k} className="flex items-center gap-3 mb-2">
               <span className="w-4 font-bold uppercase text-xs">{k}</span>
-              <input type="range" min={0} max={255} value={rgb[k]} onChange={e => updateFromRgb(k, +e.target.value)} className="flex-1" />
-              <input type="number" min={0} max={255} value={rgb[k]} onChange={e => updateFromRgb(k, +e.target.value)}
-                className="w-16 text-center text-sm bg-muted/30 border border-border rounded px-2 py-1" />
+              <input
+                type="range"
+                min={0}
+                max={255}
+                value={rgb[k]}
+                onChange={e => updateFromRgb(k, +e.target.value)}
+                className="flex-1"
+                aria-label={`RGB ${k.toUpperCase()} color channel slider`}
+              />
+              <input
+                type="number"
+                min={0}
+                max={255}
+                value={rgb[k]}
+                onChange={e => updateFromRgb(k, +e.target.value)}
+                className="w-16 text-center text-sm bg-muted/30 border border-border rounded px-2 py-1"
+                aria-label={`RGB ${k.toUpperCase()} color channel number`}
+              />
             </div>
           ))}
         </div>
@@ -142,15 +172,30 @@ export default function ColorConverterTool() {
         <div className="bg-card rounded-xl border border-border p-4">
           <div className="flex items-center justify-between mb-3">
             <label className="font-semibold">HSL</label>
-            <CopyBtn text={`hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`} />
+            <CopyBtn text={`hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`} label="HSL" />
           </div>
-          <div className="font-mono text-sm text-muted-foreground mb-3">hsl({hsl.h}, {hsl.s}%, {hsl.l}%)</div>
+          <div className="font-mono text-sm text-muted-foreground mb-3" aria-live="polite">hsl({hsl.h}, {hsl.s}%, {hsl.l}%)</div>
           {[{k:'h',max:360,label:'H°'},{k:'s',max:100,label:'S%'},{k:'l',max:100,label:'L%'}].map(({k,max,label}) => (
             <div key={k} className="flex items-center gap-3 mb-2">
               <span className="w-6 text-xs font-bold">{label}</span>
-              <input type="range" min={0} max={max} value={hsl[k as 'h'|'s'|'l']} onChange={e => updateFromHsl(k as 'h'|'s'|'l', +e.target.value)} className="flex-1" />
-              <input type="number" min={0} max={max} value={hsl[k as 'h'|'s'|'l']} onChange={e => updateFromHsl(k as 'h'|'s'|'l', +e.target.value)}
-                className="w-16 text-center text-sm bg-muted/30 border border-border rounded px-2 py-1" />
+              <input
+                type="range"
+                min={0}
+                max={max}
+                value={hsl[k as 'h'|'s'|'l']}
+                onChange={e => updateFromHsl(k as 'h'|'s'|'l', +e.target.value)}
+                className="flex-1"
+                aria-label={`HSL ${label} color channel slider`}
+              />
+              <input
+                type="number"
+                min={0}
+                max={max}
+                value={hsl[k as 'h'|'s'|'l']}
+                onChange={e => updateFromHsl(k as 'h'|'s'|'l', +e.target.value)}
+                className="w-16 text-center text-sm bg-muted/30 border border-border rounded px-2 py-1"
+                aria-label={`HSL ${label} color channel number`}
+              />
             </div>
           ))}
         </div>

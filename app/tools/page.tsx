@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { tools, categories, searchTools, getToolsByCategory, Tool } from '@/lib/tools-data';
+import { tools, categories, searchTools, getToolsByCategory } from '@/lib/tools-data';
 import { SearchBar } from '@/components/SearchBar';
 import { ToolCard } from '@/components/ToolCard';
 import { Button } from '@/components/ui/button';
@@ -48,7 +48,7 @@ export default function ToolsPage() {
   }, [searchQuery, selectedCategory, sortBy]);
 
   return (
-    <main className="min-h-screen pt-8 pb-16">
+    <div className="min-h-screen pt-8 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
@@ -69,12 +69,13 @@ export default function ToolsPage() {
 
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
             {/* Category filters */}
-            <div className="flex flex-wrap gap-2 justify-center">
+            <div className="flex flex-wrap gap-2 justify-center" role="group" aria-label="Filter tools by category">
               {categories.map((category) => (
                 <Button
                   key={category}
                   variant={selectedCategory === category ? 'default' : 'secondary'}
                   size="sm"
+                  aria-pressed={selectedCategory === category}
                   onClick={() => setSelectedCategory(category)}
                   className={cn(
                     'transition-all',
@@ -88,11 +89,12 @@ export default function ToolsPage() {
 
             {/* Sort options */}
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Sort by:</span>
+              <label htmlFor="sort-select" className="text-sm text-muted-foreground">Sort by:</label>
               <select
+                id="sort-select"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="bg-card border border-border rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="bg-card border border-border rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
               >
                 <option value="popular">Popular</option>
                 <option value="newest">Newest</option>
@@ -103,11 +105,11 @@ export default function ToolsPage() {
         </div>
 
         {/* Tools Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section aria-label="Developer tools list" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredAndSortedTools.map((tool) => (
             <ToolCard key={tool.id} {...tool} />
           ))}
-        </div>
+        </section>
 
         {filteredAndSortedTools.length === 0 && (
           <div className="text-center py-16">
@@ -125,6 +127,6 @@ export default function ToolsPage() {
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }

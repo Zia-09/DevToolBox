@@ -12,7 +12,6 @@ export default function YamlToJsonTool() {
   const [direction, setDirection] = useState<'yaml-to-json' | 'json-to-yaml'>('yaml-to-json');
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const tool = getToolBySlug('yaml-to-json');
 
   useEffect(() => {
     try {
@@ -63,24 +62,17 @@ export default function YamlToJsonTool() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="p-2 rounded-lg bg-primary/10 text-primary">
-          <RefreshCw className="h-5 w-5" />
-        </div>
-        <h1 className="text-3xl font-bold">{tool?.name}</h1>
-      </div>
-      <p className="text-muted-foreground mb-8">{tool?.description}</p>
-
+    <div className="py-4">
       {/* Direction Toggle bar */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-3">
-          <span className="font-semibold text-sm">
-            {direction === 'yaml-to-json' ? 'YAML ➜ JSON' : 'JSON ➜ YAML'}
+          <span className="font-semibold text-sm" aria-live="polite">
+            Current mode: {direction === 'yaml-to-json' ? 'YAML ➜ JSON' : 'JSON ➜ YAML'}
           </span>
           <button
             onClick={toggleDirection}
             className="p-1.5 rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors"
+            aria-label={`Swap conversion direction. Currently ${direction === 'yaml-to-json' ? 'YAML to JSON' : 'JSON to YAML'}`}
             title="Swap Conversion Direction"
           >
             <RefreshCw className="h-4 w-4" />
@@ -92,6 +84,7 @@ export default function YamlToJsonTool() {
           className={`px-3 py-1.5 text-xs font-medium rounded-lg text-white transition-colors duration-200 ${
             copied ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'
           } disabled:opacity-40`}
+          aria-label="Copy conversion result to clipboard"
         >
           {copied ? '✓ Copied!' : 'Copy Result'}
         </button>
@@ -100,10 +93,11 @@ export default function YamlToJsonTool() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Input area */}
         <div className="space-y-2">
-          <label className="font-semibold text-sm">
+          <label htmlFor="yaml-text-input" className="font-semibold text-sm">
             {direction === 'yaml-to-json' ? 'YAML Input' : 'JSON Input'}
           </label>
           <Textarea
+            id="yaml-text-input"
             value={yamlInput}
             onChange={(e) => handleInputChange(e.target.value)}
             placeholder={direction === 'yaml-to-json' ? 'Paste your YAML code here...' : 'Paste your JSON code here...'}
@@ -114,15 +108,20 @@ export default function YamlToJsonTool() {
 
         {/* Output area */}
         <div className="space-y-2">
-          <label className="font-semibold text-sm">
+          <label htmlFor="json-text-output" className="font-semibold text-sm">
             {direction === 'yaml-to-json' ? 'JSON Output' : 'YAML Output'}
           </label>
           {error && (
-            <div className="p-3 text-xs bg-destructive/10 text-destructive border border-destructive/20 rounded-lg font-mono mb-2 overflow-auto max-h-[80px]">
+            <div
+              className="p-3 text-xs bg-destructive/10 text-destructive border border-destructive/20 rounded-lg font-mono mb-2 overflow-auto max-h-[80px]"
+              role="alert"
+              aria-live="assertive"
+            >
               {error}
             </div>
           )}
           <Textarea
+            id="json-text-output"
             value={jsonOutput}
             readOnly
             placeholder="Result will automatically render here..."

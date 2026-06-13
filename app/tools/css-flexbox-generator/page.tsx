@@ -1,22 +1,18 @@
-import { tools } from '@/lib/tools-data';
+import { notFound } from 'next/navigation';
+import { getToolBySlug } from '@/lib/tools-data';
+import { generateToolMetadata } from '@/lib/metadata';
+import { ToolPageLayout } from '@/components/ToolPageLayout';
 import FlexboxGeneratorTool from '@/components/FlexboxGeneratorTool';
 
-const tool = tools.find(t => t.slug === 'css-flexbox-generator');
+const tool = getToolBySlug('css-flexbox-generator');
+if (!tool) notFound();
 
-export const metadata = {
-  title: `${tool?.name} — DevToolbox`,
-  description: tool?.description,
-  openGraph: {
-    title: `${tool?.name} — DevToolbox`,
-    description: tool?.description,
-    url: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/css-flexbox-generator`,
-    type: 'website',
-  },
-  alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/css-flexbox-generator`,
-  },
-};
+export const metadata = generateToolMetadata(tool!);
 
-export default function FlexboxGeneratorPage() {
-  return <FlexboxGeneratorTool />;
+export default function CssFlexboxGeneratorPage() {
+  return (
+    <ToolPageLayout tool={tool!}>
+      <FlexboxGeneratorTool />
+    </ToolPageLayout>
+  );
 }

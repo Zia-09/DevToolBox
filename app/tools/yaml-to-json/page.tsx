@@ -1,22 +1,18 @@
-import { tools } from '@/lib/tools-data';
+import { notFound } from 'next/navigation';
+import { getToolBySlug } from '@/lib/tools-data';
+import { generateToolMetadata } from '@/lib/metadata';
+import { ToolPageLayout } from '@/components/ToolPageLayout';
 import YamlToJsonTool from '@/components/tools/YamlToJsonTool';
 
-const tool = tools.find(t => t.slug === 'yaml-to-json');
+const tool = getToolBySlug('yaml-to-json');
+if (!tool) notFound();
 
-export const metadata = {
-  title: `${tool?.name} — DevToolbox`,
-  description: tool?.description,
-  openGraph: {
-    title: `${tool?.name} — DevToolbox`,
-    description: tool?.description,
-    url: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/yaml-to-json`,
-    type: 'website',
-  },
-  alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/yaml-to-json`,
-  },
-};
+export const metadata = generateToolMetadata(tool!);
 
 export default function YamlToJsonPage() {
-  return <YamlToJsonTool />;
+  return (
+    <ToolPageLayout tool={tool!}>
+      <YamlToJsonTool />
+    </ToolPageLayout>
+  );
 }

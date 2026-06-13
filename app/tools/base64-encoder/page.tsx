@@ -1,22 +1,18 @@
-import { tools } from '@/lib/tools-data';
+import { notFound } from 'next/navigation';
+import { getToolBySlug } from '@/lib/tools-data';
+import { generateToolMetadata } from '@/lib/metadata';
+import { ToolPageLayout } from '@/components/ToolPageLayout';
 import Base64Tool from '@/components/tools/Base64Tool';
 
-const tool = tools.find(t => t.slug === 'base64-encoder');
+const tool = getToolBySlug('base64-encoder');
+if (!tool) notFound();
 
-export const metadata = {
-  title: `${tool?.name} — DevToolbox`,
-  description: tool?.description,
-  openGraph: {
-    title: `${tool?.name} — DevToolbox`,
-    description: tool?.description,
-    url: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/base64-encoder`,
-    type: 'website',
-  },
-  alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/base64-encoder`,
-  },
-};
+export const metadata = generateToolMetadata(tool!);
 
 export default function Base64EncoderPage() {
-  return <Base64Tool />;
+  return (
+    <ToolPageLayout tool={tool!}>
+      <Base64Tool />
+    </ToolPageLayout>
+  );
 }

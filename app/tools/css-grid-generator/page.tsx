@@ -1,22 +1,18 @@
-import { tools } from '@/lib/tools-data';
+import { notFound } from 'next/navigation';
+import { getToolBySlug } from '@/lib/tools-data';
+import { generateToolMetadata } from '@/lib/metadata';
+import { ToolPageLayout } from '@/components/ToolPageLayout';
 import CssGridGeneratorTool from '@/components/tools/CssGridGeneratorTool';
 
-const tool = tools.find(t => t.slug === 'css-grid-generator');
+const tool = getToolBySlug('css-grid-generator');
+if (!tool) notFound();
 
-export const metadata = {
-  title: `${tool?.name} — DevToolbox`,
-  description: tool?.description,
-  openGraph: {
-    title: `${tool?.name} — DevToolbox`,
-    description: tool?.description,
-    url: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/css-grid-generator`,
-    type: 'website',
-  },
-  alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/css-grid-generator`,
-  },
-};
+export const metadata = generateToolMetadata(tool!);
 
 export default function CssGridGeneratorPage() {
-  return <CssGridGeneratorTool />;
+  return (
+    <ToolPageLayout tool={tool!}>
+      <CssGridGeneratorTool />
+    </ToolPageLayout>
+  );
 }

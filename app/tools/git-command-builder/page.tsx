@@ -1,22 +1,18 @@
-import { tools } from '@/lib/tools-data';
+import { notFound } from 'next/navigation';
+import { getToolBySlug } from '@/lib/tools-data';
+import { generateToolMetadata } from '@/lib/metadata';
+import { ToolPageLayout } from '@/components/ToolPageLayout';
 import GitCommandBuilderTool from '@/components/GitCommandBuilderTool';
 
-const tool = tools.find(t => t.slug === 'git-command-builder');
+const tool = getToolBySlug('git-command-builder');
+if (!tool) notFound();
 
-export const metadata = {
-  title: `${tool?.name} — DevToolbox`,
-  description: tool?.description,
-  openGraph: {
-    title: `${tool?.name} — DevToolbox`,
-    description: tool?.description,
-    url: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/git-command-builder`,
-    type: 'website',
-  },
-  alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/git-command-builder`,
-  },
-};
+export const metadata = generateToolMetadata(tool!);
 
 export default function GitCommandBuilderPage() {
-  return <GitCommandBuilderTool />;
+  return (
+    <ToolPageLayout tool={tool!}>
+      <GitCommandBuilderTool />
+    </ToolPageLayout>
+  );
 }

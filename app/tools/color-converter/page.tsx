@@ -1,22 +1,18 @@
-import { tools } from '@/lib/tools-data';
+import { notFound } from 'next/navigation';
+import { getToolBySlug } from '@/lib/tools-data';
+import { generateToolMetadata } from '@/lib/metadata';
+import { ToolPageLayout } from '@/components/ToolPageLayout';
 import ColorConverterTool from '@/components/tools/ColorConverterTool';
 
-const tool = tools.find(t => t.slug === 'color-converter');
+const tool = getToolBySlug('color-converter');
+if (!tool) notFound();
 
-export const metadata = {
-  title: `${tool?.name} — DevToolbox`,
-  description: tool?.description,
-  openGraph: {
-    title: `${tool?.name} — DevToolbox`,
-    description: tool?.description,
-    url: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/color-converter`,
-    type: 'website',
-  },
-  alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/color-converter`,
-  },
-};
+export const metadata = generateToolMetadata(tool!);
 
 export default function ColorConverterPage() {
-  return <ColorConverterTool />;
+  return (
+    <ToolPageLayout tool={tool!}>
+      <ColorConverterTool />
+    </ToolPageLayout>
+  );
 }

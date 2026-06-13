@@ -1,22 +1,18 @@
-import { tools } from '@/lib/tools-data';
+import { notFound } from 'next/navigation';
+import { getToolBySlug } from '@/lib/tools-data';
+import { generateToolMetadata } from '@/lib/metadata';
+import { ToolPageLayout } from '@/components/ToolPageLayout';
 import DiffCheckerTool from '@/components/tools/DiffCheckerTool';
 
-const tool = tools.find(t => t.slug === 'diff-checker');
+const tool = getToolBySlug('diff-checker');
+if (!tool) notFound();
 
-export const metadata = {
-  title: `${tool?.name} — DevToolbox`,
-  description: tool?.description,
-  openGraph: {
-    title: `${tool?.name} — DevToolbox`,
-    description: tool?.description,
-    url: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/diff-checker`,
-    type: 'website',
-  },
-  alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/diff-checker`,
-  },
-};
+export const metadata = generateToolMetadata(tool!);
 
 export default function DiffCheckerPage() {
-  return <DiffCheckerTool />;
+  return (
+    <ToolPageLayout tool={tool!}>
+      <DiffCheckerTool />
+    </ToolPageLayout>
+  );
 }

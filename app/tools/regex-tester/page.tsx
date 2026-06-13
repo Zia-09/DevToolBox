@@ -1,22 +1,18 @@
-import { tools } from '@/lib/tools-data';
+import { notFound } from 'next/navigation';
+import { getToolBySlug } from '@/lib/tools-data';
+import { generateToolMetadata } from '@/lib/metadata';
+import { ToolPageLayout } from '@/components/ToolPageLayout';
 import RegexTesterTool from '@/components/tools/RegexTesterTool';
 
-const tool = tools.find(t => t.slug === 'regex-tester');
+const tool = getToolBySlug('regex-tester');
+if (!tool) notFound();
 
-export const metadata = {
-  title: `${tool?.name} — DevToolbox`,
-  description: tool?.description,
-  openGraph: {
-    title: `${tool?.name} — DevToolbox`,
-    description: tool?.description,
-    url: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/regex-tester`,
-    type: 'website',
-  },
-  alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/regex-tester`,
-  },
-};
+export const metadata = generateToolMetadata(tool!);
 
 export default function RegexTesterPage() {
-  return <RegexTesterTool />;
+  return (
+    <ToolPageLayout tool={tool!}>
+      <RegexTesterTool />
+    </ToolPageLayout>
+  );
 }

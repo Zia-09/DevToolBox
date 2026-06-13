@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
-import { GitCompare } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { getToolBySlug } from '@/lib/tools-data';
 import * as Diff from 'diff';
@@ -8,7 +7,6 @@ import * as Diff from 'diff';
 export default function DiffCheckerTool() {
   const [original, setOriginal] = useState('const user = {\n  name: "John Doe",\n  age: 30,\n  role: "admin"\n};');
   const [modified, setModified] = useState('const user = {\n  name: "Jane Doe",\n  age: 31,\n  role: "admin",\n  active: true\n};');
-  const tool = getToolBySlug('diff-checker');
 
   useEffect(() => {
     try {
@@ -32,17 +30,9 @@ export default function DiffCheckerTool() {
   }, [original, modified]);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="p-2 rounded-lg bg-primary/10 text-primary">
-          <GitCompare className="h-5 w-5" />
-        </div>
-        <h1 className="text-3xl font-bold">{tool?.name}</h1>
-      </div>
-      <p className="text-muted-foreground mb-8">{tool?.description}</p>
-
+    <div className="py-4">
       {/* Info Stats Bar */}
-      <div className="flex gap-4 mb-6 text-sm font-semibold">
+      <div className="flex gap-4 mb-6 text-sm font-semibold" aria-live="polite">
         <span className="text-green-500 bg-green-500/10 px-3 py-1 rounded-full">
           +{diffResult.additions} additions
         </span>
@@ -55,8 +45,9 @@ export default function DiffCheckerTool() {
         {/* Input area */}
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="font-semibold text-sm">Original Text</label>
+            <label htmlFor="diff-original-input" className="font-semibold text-sm">Original Text</label>
             <Textarea
+              id="diff-original-input"
               value={original}
               onChange={(e) => setOriginal(e.target.value)}
               className="min-h-[220px] font-mono text-sm bg-card resize-none"
@@ -64,8 +55,9 @@ export default function DiffCheckerTool() {
             />
           </div>
           <div className="space-y-2">
-            <label className="font-semibold text-sm">Modified Text</label>
+            <label htmlFor="diff-modified-input" className="font-semibold text-sm">Modified Text</label>
             <Textarea
+              id="diff-modified-input"
               value={modified}
               onChange={(e) => setModified(e.target.value)}
               className="min-h-[220px] font-mono text-sm bg-card resize-none"
@@ -76,8 +68,12 @@ export default function DiffCheckerTool() {
 
         {/* Output Compare Pane */}
         <div className="space-y-2">
-          <label className="font-semibold text-sm">Comparison Output</label>
-          <div className="min-h-[460px] max-h-[500px] border border-border rounded-lg bg-muted/30 p-4 font-mono text-xs overflow-auto leading-6">
+          <label id="comparison-output-label" className="font-semibold text-sm">Comparison Output</label>
+          <div
+            tabIndex={0}
+            aria-labelledby="comparison-output-label"
+            className="min-h-[460px] max-h-[500px] border border-border rounded-lg bg-muted/30 p-4 font-mono text-xs overflow-auto leading-6 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          >
             {diffResult.diff.map((part, index) => {
               const colorClass = part.added 
                 ? 'bg-green-500/20 text-green-200 border-l-4 border-green-500 pl-2 block' 

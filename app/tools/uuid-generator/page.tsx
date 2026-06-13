@@ -1,22 +1,18 @@
-import { tools } from '@/lib/tools-data';
+import { notFound } from 'next/navigation';
+import { getToolBySlug } from '@/lib/tools-data';
+import { generateToolMetadata } from '@/lib/metadata';
+import { ToolPageLayout } from '@/components/ToolPageLayout';
 import UuidGeneratorTool from '@/components/tools/UuidGeneratorTool';
 
-const tool = tools.find(t => t.slug === 'uuid-generator');
+const tool = getToolBySlug('uuid-generator');
+if (!tool) notFound();
 
-export const metadata = {
-  title: `${tool?.name} — DevToolbox`,
-  description: tool?.description,
-  openGraph: {
-    title: `${tool?.name} — DevToolbox`,
-    description: tool?.description,
-    url: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/uuid-generator`,
-    type: 'website',
-  },
-  alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/tools/uuid-generator`,
-  },
-};
+export const metadata = generateToolMetadata(tool!);
 
 export default function UuidGeneratorPage() {
-  return <UuidGeneratorTool />;
+  return (
+    <ToolPageLayout tool={tool!}>
+      <UuidGeneratorTool />
+    </ToolPageLayout>
+  );
 }
