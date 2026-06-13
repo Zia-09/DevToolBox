@@ -18,6 +18,8 @@ export async function generateStaticParams() {
   }));
 }
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dev-tool-box-eight.vercel.app';
+
 export async function generateMetadata({ params }: BlogPostPageProps) {
   const post = getBlogPostBySlug(params.slug);
   if (!post) return {};
@@ -29,10 +31,10 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
       title: `${post.title} — DevToolbox Blog`,
       description: post.excerpt,
       type: 'article',
-      url: `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${post.slug}`,
+      url: `${baseUrl}/blog/${post.slug}`,
     },
     alternates: {
-      canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${post.slug}`,
+      canonical: `${baseUrl}/blog/${post.slug}`,
     },
   };
 }
@@ -44,8 +46,36 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
     notFound();
   }
 
+  const blogSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.date,
+    dateModified: post.date,
+    author: {
+      '@type': 'Person',
+      name: post.author,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'DevToolbox',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${baseUrl}/icons/icon-512x512.png`,
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${baseUrl}/blog/${post.slug}`,
+    },
+    image: `${baseUrl}/og-image.png`,
+  };
+
   return (
-    <main className="min-h-screen pt-8 pb-16 bg-background">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogSchema) }} />
+      <main className="min-h-screen pt-8 pb-16 bg-background">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Link */}
         <Link
@@ -149,5 +179,6 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
         </article>
       </div>
     </main>
+    </>
   );
 }
