@@ -1,9 +1,9 @@
-import type { MetadataRoute } from 'next';
+import { MetadataRoute } from 'next';
 import { tools } from '@/lib/tools-data';
 import { blogPosts } from '@/lib/blog-data';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://dev-tool-box-eight.vercel.app';
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const base = 'https://dev-tool-box-eight.vercel.app';
   const now = new Date();
 
   const staticPages: MetadataRoute.Sitemap = [
@@ -63,3 +63,4 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [...staticPages, ...toolPages, ...blogPages];
 }
+
