@@ -33,6 +33,70 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
   },
+  async redirects() {
+    return [
+      {
+        source: '/json-formatter',
+        destination: '/tools/json-formatter',
+        permanent: true,
+      },
+      {
+        source: '/css-flexbox-generator',
+        destination: '/tools/css-flexbox-generator',
+        permanent: true,
+      },
+      {
+        source: '/git-command-builder',
+        destination: '/tools/git-command-builder',
+        permanent: true,
+      },
+      {
+        source: '/base64-encoder',
+        destination: '/tools/base64-encoder',
+        permanent: true,
+      },
+      {
+        source: '/color-converter',
+        destination: '/tools/color-converter',
+        permanent: true,
+      },
+      {
+        source: '/regex-tester',
+        destination: '/tools/regex-tester',
+        permanent: true,
+      },
+      {
+        source: '/uuid-generator',
+        destination: '/tools/uuid-generator',
+        permanent: true,
+      },
+      {
+        source: '/yaml-to-json',
+        destination: '/tools/yaml-to-json',
+        permanent: true,
+      },
+      {
+        source: '/css-grid-generator',
+        destination: '/tools/css-grid-generator',
+        permanent: true,
+      },
+      {
+        source: '/markdown-editor',
+        destination: '/tools/markdown-editor',
+        permanent: true,
+      },
+      {
+        source: '/jwt-decoder',
+        destination: '/tools/jwt-decoder',
+        permanent: true,
+      },
+      {
+        source: '/diff-checker',
+        destination: '/tools/diff-checker',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { HomeContent } from './HomeContent';
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://devtoolbox.io';
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dev-tool-box-eight.vercel.app';
 
 export const metadata: Metadata = {
   title: 'DevToolbox — Free Online Developer Tools (No Login)',

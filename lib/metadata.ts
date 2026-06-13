@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Tool } from './tools-data';
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://devtoolbox.io';
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dev-tool-box-eight.vercel.app';
 
 export function generateToolMetadata(tool: Tool): Metadata {
   const title = `${tool.name} — Free Online Tool | DevToolbox`;

@@ -3,7 +3,7 @@ import { tools } from '@/lib/tools-data';
 import { blogPosts } from '@/lib/blog-data';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://devtoolbox.io';
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://dev-tool-box-eight.vercel.app';
   const now = new Date();
 
   const staticPages: MetadataRoute.Sitemap = [

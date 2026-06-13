@@ -2,10 +2,10 @@ import Link from 'next/link';
 import { ArrowLeft, FileText } from 'lucide-react';
 
 export const metadata = {
-  title: 'Terms of Service — DevToolbox',
+  title: 'Terms of Service',
   description: 'Terms of Service policy for using the free web utility tools at DevToolbox.',
   alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/terms-of-service`,
+    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://dev-tool-box-eight.vercel.app'}/terms-of-service`,
   },
 };
 

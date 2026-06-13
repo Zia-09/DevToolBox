@@ -2,10 +2,10 @@ import Link from 'next/link';
 import { ArrowLeft, Shield } from 'lucide-react';
 
 export const metadata = {
-  title: 'Privacy Policy — DevToolbox',
+  title: 'Privacy Policy',
   description: 'Our privacy commitments and details about data handling for DevToolbox.',
   alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/privacy-policy`,
+    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://dev-tool-box-eight.vercel.app'}/privacy-policy`,
   },
 };
 

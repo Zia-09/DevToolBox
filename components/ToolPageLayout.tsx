@@ -47,7 +47,7 @@ function FaqItem({ question, answer, toolName }: { question: string; answer: str
 }
 
 export function ToolPageLayout({ tool, children }: ToolPageLayoutProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://devtoolbox.io';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dev-tool-box-eight.vercel.app';
   const relatedTools = getRelatedTools(tool.relatedTools || []);
 
   // Track tool opened

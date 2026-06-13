@@ -8,7 +8,7 @@ import { Toaster } from '@/components/ui/sonner';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://devtoolbox.io';
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dev-tool-box-eight.vercel.app';
 
 const websiteSchema = {
   '@context': 'https://schema.org',
