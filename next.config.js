@@ -100,11 +100,28 @@ const nextConfig = {
   async headers() {
     return [
       {
+        source: '/sitemap.xml',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, must-revalidate',
+          },
+        ],
+      },
+      {
+        source: '/robots.txt',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400',
+          },
+        ],
+      },
+      {
         source: '/(.*)',
         headers: securityHeaders,
       },
       {
-        // Cache static assets aggressively
         source: '/icons/(.*)',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
       },
